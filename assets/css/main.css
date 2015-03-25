@@ -1,0 +1,254 @@
+#container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  background-color: #333333;
+}
+
+#sidebar {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 380px;
+  height: 100%;
+  background-color: #eeeeee;
+  box-shadow: 3px 0px 5px 0 rgba(0,0,0,.5)
+}
+
+#title {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 35px;
+  position: absolute;
+  top: 50px;
+  left: 15px;
+  color: #222222;
+}
+
+#title-container {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: #ffffff;
+  background-image: url("../../assets/images/GridPP-logo_web.png");
+  background-size: 340px 110px;
+  background-repeat: no-repeat;
+  width: 380px;
+  height: 120px; 	
+}
+
+#menu-button {
+  position: fixed;
+  top: 95px;
+  left: 320px;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  /*background-color: #c62828;*/
+  background-color: #0b2d83;
+  cursor: pointer;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.3)
+}
+
+#menu-button:hover {
+  /*background-color: #b71c1c;*/
+  background-color: #8596c1;
+}
+
+#menu-button img {
+  width: 30px;
+  height: 30px;
+  margin: 10px;
+}
+
+#details {
+  font-family: 'Open Sans', sans-serif;
+  position: absolute;
+  top: 170px;
+  left: 30px;
+  color: #555555;
+}
+
+#frame-indicator {
+  font-family: 'Open Sans', sans-serif;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 524px;
+  /* margin-left: -10px; */
+  margin-left: -64px;
+  margin-top: 232px;
+  text-align: center;
+  font-weight: 300;
+  color: white;
+  font-size: 24px;
+}
+
+.button {
+  width: 30px;
+  height: 30px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: 235px;
+  cursor: pointer;
+}
+
+.button img {
+  width: 30px;
+  height: 30px;
+}
+
+#back-button {
+  /* margin-left: 7px; */
+  margin-left: 0px;
+}
+
+#forward-button {
+  /* margin-left: 340px; */
+  margin-left: 368px;
+}
+
+#mask {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: 0.7;
+	display: none;
+}
+
+#xyCbox {
+  position: fixed;
+  padding: 16px;
+  top: 50%;
+  left: 50%;
+  width: 256px;
+  margin-left: -128px;
+  height: 500px;
+  margin-top: -250px;
+  background-color: #dddddd;
+  display: none;
+}
+
+#xyCbox textarea{
+  width: 246px;
+  height: 492px;
+  resize: none;
+}
+
+#menu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  margin-left: -300px;
+  height: 500px;
+  margin-top: -250px;
+  background-color: white;
+  display: none;
+}
+
+#menu-title {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 580px;
+  height: 30px;
+  padding: 10px;
+  background-color: #0b2d83;
+  line-height: 30px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 17px;
+  color: white;
+}
+
+#menu-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+}
+
+#menu ul {
+	position: absolute;
+	top: 50px;
+	left: 0px;
+	padding: 0;
+	margin: 0;
+	width: 600px;
+	height: 450px;
+	overflow-y: scroll;
+	overflow-x: none;
+}
+
+#menu ul li {
+	list-style: none;
+	width: 560px;
+	height: 30px;
+	padding: 10px;
+	color: #333333;
+  font-family: 'Open Sans', sans-serif;
+	line-height: 30px;
+	margin: 0;
+	border-bottom: 1px solid #cccccc;
+	cursor: pointer;
+}
+
+#menu ul li:hover {
+  background-color: #eeeeee;
+}
+
+#files-filter {
+	width: 570px;
+	height: 30px;
+	background-color: white;
+	font-style: italic;
+  font-family: 'Open Sans', sans-serif;
+	border: none;
+	font-size: 17px;
+	padding: 5px;
+	border-bottom: 1px solid #333333;
+}
+
+#files-filter:focus {
+	border-bottom: 1px solid #333333;
+	outline: none;
+}
+
+#canvas-container {
+  width: 524px;
+  height: 524px;
+  position: fixed;
+  /* top: 50%; */
+  left: 50%;
+  /* height: 256px;*/
+  /* margin-top: -128px; */
+  /* width: 828px;*/
+  /* margin-left: -214px; */
+  margin-left: -64px;
+  background: gray;
+  margin-top: 20px;
+}
+
+#loading {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: #ffffff;
+  font-family: open-sans;
+  font-size: 25px;
+  display: none;
+  font-weight: 300;
+  z-index: 500;
+  padding-top: 100px;
+}

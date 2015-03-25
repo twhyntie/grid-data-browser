@@ -1,2 +1,4 @@
-# grid-data-browser
-A data browser for grid data, based on C. Hewitt's lucid-data-browser.
+# The Grid Data Browser
+
+A data browser for grid data, based on @calhewitt's
+[lucid-data-browser](https://github.com/calhewitt/lucid-data-browser).

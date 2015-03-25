@@ -1,0 +1,5 @@
+# Python
+*.py[o,c]
+
+# Logs
+log_*.log
