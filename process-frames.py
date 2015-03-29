@@ -29,11 +29,14 @@ import json
 #...for processing the datasets.
 from cernatschool.dataset import Dataset
 
+#...for making time.
+from cernatschool.handlers import make_time_dir
+
 #...for making the frame and clusters images.
 from visualisation import makeFrameImage, makeKlusterImage
 
-#...for getting the cluster properties JSON.
-from helpers import getKlusterPropertiesJson
+#...for creating a browser page for a given datafile.
+from pagemaker import make_browser_page
 
 
 if __name__ == "__main__":
@@ -48,7 +51,6 @@ if __name__ == "__main__":
     parser.add_argument("inputPath",       help="Path to the input dataset.")
     parser.add_argument("outputPath",      help="The path for the output files.")
     parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
-    parser.add_argument("-g", "--gamma",   help="Process gamma candidates too", action="store_true")
     args = parser.parse_args()
 
     ## The path to the data file.
@@ -64,15 +66,11 @@ if __name__ == "__main__":
         level=lg.INFO
 
     # Configure the logging.
-    lg.basicConfig(filename='log_process-frames.log', filemode='w', level=level)
+    lg.basicConfig(filename=os.path.join(outputpath, 'log_process-frames.log'), filemode='w', level=level)
 
     print("*")
     print("* Input path          : '%s'" % (datapath))
     print("* Output path         : '%s'" % (outputpath))
-    if args.gamma:
-        print("* Gamma candidate clusters WILL be processed.")
-    else:
-        print("* Gamma candidate clusters WILL NOT be processed.")
     print("*")
 
 
@@ -86,36 +84,51 @@ if __name__ == "__main__":
     # Create the subdirectories.
 
     ## The path to the frame images.
-    frpath = outputpath + "/frames/"
+    frame_image_path = os.path.join(outputpath, "png")
     #
-    if os.path.isdir(frpath):
-        rmtree(frpath)
-        lg.info(" * Removing directory '%s'..." % (frpath))
-    os.mkdir(frpath)
-    lg.info(" * Creating directory '%s'..." % (frpath))
+    if os.path.isdir(frame_image_path):
+        rmtree(frame_image_path)
+        lg.info(" * Removing directory '%s'..." % (frame_image_path))
+    os.mkdir(frame_image_path)
+    lg.info(" * Creating directory '%s'..." % (frame_image_path))
     lg.info("")
 
-    ## The path to the cluster images.
-    klpath = outputpath + "/clusters/"
+    ## The path to the frame HTML pages.
+    web_page_path = os.path.join(outputpath, "html")
     #
-    if os.path.isdir(klpath):
-        rmtree(klpath)
-        lg.info(" * Removing directory '%s'..." % (klpath))
-    os.mkdir(klpath)
-    lg.info(" * Creating directory '%s'..." % (klpath))
+    if os.path.isdir(web_page_path):
+        rmtree(web_page_path)
+        lg.info(" * Removing directory '%s'..." % (web_page_path))
+    os.mkdir(web_page_path)
+    lg.info(" * Creating directory '%s'..." % (web_page_path))
     lg.info("")
+
+    ## The path to the data files.
+    dat_files_path = os.path.join(datapath, "ASCIIxyC")
 
     ## The dataset to process.
-    ds = Dataset(datapath)
+    ds = Dataset(dat_files_path)
 
-    ## Latitude of the test dataset [deg.].
-    lat = 51.509915
+    ## The path to the geographic information JSON file.
+    geo_json_path = os.path.join(outputpath, "geo.json")
+    #
+    if not os.path.exists(geo_json_path):
+        raise IOError("* ERROR: no geographics metadata JSON!")
 
-    ## Longitude of the test dataset [deg.].
-    lon = -0.142515 # [deg.]
+    ## The geographic information JSON file.
+    mf = open(geo_json_path, "r")
+    #
+    md = json.load(mf)
+    mf.close()
 
-    ## Altitude of the test dataset [m].
-    alt = 34.02
+    ## The latitude [deg.]
+    lat = float(md['lat'])
+
+    ## The longitude [deg.]
+    lon = float(md['lon'])
+
+    ## The altitude [m].
+    alt = float(md['alt'])
 
     ## The frames from the dataset.
     frames = ds.getFrames((lat, lon, alt))
@@ -125,20 +138,14 @@ if __name__ == "__main__":
     ## A list of frames.
     mds = []
 
-    # Clusters
-    #----------
-
-    ## A list of clusters.
-    klusters = []
-
     # Loop over the frames and upload them to the DFC.
-    for f in frames:
+    for i, f in enumerate(frames):
 
         ## The basename for the data frame, based on frame information.
-        bn = "%s_%d-%06d" % (f.getChipId(), f.getStartTimeSec(), f.getStartTimeSubSec())
+        bn = "%s_%s" % (f.getChipId(), make_time_dir(f.getStartTimeSec()))
 
         # Create the frame image.
-        makeFrameImage(bn, f.getPixelMap(), frpath)
+        makeFrameImage(bn, f.getPixelMap(), frame_image_path)
 
         # Create the metadata dictionary for the frame.
         metadata = {
@@ -170,30 +177,33 @@ if __name__ == "__main__":
         # Add the frame metadata to the list of frames.
         mds.append(metadata)
 
-#        # The cluster analysis
-#        #----------------------
-#
-#        # Loop over the clusters.
-#        for i, kl in enumerate(f.getKlusterFinder().getListOfKlusters()):
-#
-#            if not args.gamma and kl.isGamma():
-#                continue
-#
-#            ## The kluster ID.
-#            klusterid = bn + "_k%05d" % (i)
-#
-#            # Get the cluster properties JSON entry and add it to the list.
-#            klusters.append(getKlusterPropertiesJson(klusterid, kl))
-#
-#            # Make the cluster image.
-#            makeKlusterImage(klusterid, kl, klpath)
+        # Create the web page for the frame.
+
+        ## The filename of the HTML page to create.
+        page_filename = os.path.join(web_page_path, bn + ".html")
+
+        ## The filename of the previous frame in the dataset.
+        prev_filename = bn + ".html"
+        #
+        if i > 0:
+            prev_filename = "%s_%s.html" % (frames[i-1].getChipId(), make_time_dir(frames[i-1].getStartTimeSec()))
+
+        ## The filename of the next frame in the dataset.
+        next_filename = bn + ".html"
+        if i < (len(frames) - 1):
+            next_filename = "%s_%s.html" % (frames[i+1].getChipId(), make_time_dir(frames[i+1].getStartTimeSec()))
+
+        # Make the page.
+        with open(page_filename, "w") as pf:
+            pf.write(make_browser_page(f, i+1, len(frames), prev_filename, next_filename, f.getPayloadString()))
 
         #break # TMP - uncomment to only process the first frame.
 
-    # Write out the frame information to a JSON file.
-    with open(outputpath + "/frames.json", "w") as jf:
-        json.dump(mds, jf)
 
-    # Write out the cluster information to a JSON file.
-    with open(outputpath + "/klusters.json", "w") as jf:
-        json.dump(klusters, jf)
+    ## The frame metadata JSON file name.
+    frame_metadata_path = "frames.json"
+    #frame_metadata_path = "%s_%s.json" % (frames[0].getChipId(), make_time_dir(frames[0].getStartTimeSec()))
+    #
+    # Write out the frame information to a JSON file.
+    with open(os.path.join(outputpath, frame_metadata_path), "w") as jf:
+        json.dump(mds, jf)
