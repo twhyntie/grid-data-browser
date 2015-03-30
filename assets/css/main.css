@@ -71,6 +71,12 @@
   color: #555555;
 }
 
+#details th {
+  text-align: left;
+  padding-top: 15px;
+  font-weight: 3000;
+}
+
 #frame-indicator {
   font-family: 'Open Sans', sans-serif;
   position: fixed;

@@ -33,7 +33,7 @@ from cernatschool.dataset import Dataset
 from cernatschool.handlers import make_time_dir
 
 #...for making the frame and clusters images.
-from visualisation import makeFrameImage, makeKlusterImage
+from visualisation import makeFrameImage #, makeKlusterImage
 
 #...for creating a browser page for a given datafile.
 from pagemaker import make_browser_page

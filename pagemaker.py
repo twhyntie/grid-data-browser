@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+
+GridPP and CERN@school: page-maker code for the data browser.
+
+Contains various helper functions for making the web pages.
+
+"""
+
 #...for the logging.
 import logging as lg
 
@@ -17,7 +25,18 @@ def make_time_stamp(sec):
     mytime = time.gmtime(sec)
 
     ## The time in the directory format.
-    s = time.strftime("%H:%M:%S, %d/%m/%Y", mytime)
+    s = time.strftime("%H:%M:%S (%Z)", mytime)
+    #s = time.strftime("%H:%M:%S, %d/%m/%Y", mytime)
+
+    return s
+
+def make_date_stamp(sec):
+
+    ## The time represented as a Python time object.
+    mytime = time.gmtime(sec)
+
+    ## The time in the directory format.
+    s = time.strftime("%a %d/%m/%Y", mytime)
 
     return s
 
@@ -49,6 +68,8 @@ def make_browser_page(f, i, N, prev_loc, next_loc, xyC):
     ## Timestamp for the frame.
     time_stamp = make_time_stamp(start_time)
 
+    date_stamp = make_date_stamp(start_time)
+
     ## The HTML page string to return.
     ps = ""
 
@@ -68,11 +89,25 @@ def make_browser_page(f, i, N, prev_loc, next_loc, xyC):
 
     ps += "    <div id = \"details\">\n"
     ps += "      <table>\n"
-    ps += "        <tr><td>Timestamp:</td><td>%s</td></tr>\n" % (time_stamp)
-    ps += "        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>\n"
-    ps += "        <tr><td>Latitude:</td><td>%.6f &deg;</td></tr>\n" % (lat)
-    ps += "        <tr><td>Longitude:</td><td>%.6f &deg;</td></tr>\n" % (lon)
-    ps += "        <tr><td>Altitude:</td><td>%.1f m;</td></tr>\n" % (alt)
+    #ps += "        <tr><td>&nbsp;</td><td>&nbsp;</td></tr>\n"
+    ps += "        <tr><th colspan=\"2\">Space</th></tr>\n"
+    ps += "        <tr><td>(Lat., Lon.)</td><td>(%.6f &deg;, %.6f &deg;)</td></tr>\n" % (lat, lon)
+    #ps += "        <tr><td>Longitude</td><td>%.6f &deg;</td></tr>\n" % (lon)
+    ps += "        <tr><td>Altitude</td><td>%.1f m</td></tr>\n" % (alt)
+    ps += "        <tr><th colspan=\"2\">Time</th></tr>\n"
+    #ps += "        <tr><td>Timestamp:</td><td>%s</td></tr>\n" % (time_stamp)
+    ps += "        <tr><td>Date</td><td>%s</td></tr>\n" % (date_stamp)
+    ps += "        <tr><td>Time</td><td>%s</td></tr>\n" % (time_stamp)
+    ps += "        <tr><td>Acq. time, ( &Delta;<em>t</em><sub><em>i</em></sub> )</td><td>%.1f s</tr>\n" % (f.getAcqTime())
+    ps += "        <tr><th colspan=\"2\">Detector</th></tr>\n"
+    ps += "        <tr><td>Chip ID</td><td>%s</td></tr>\n" % (f.getChipId())
+    ps += "        <tr><td>Bias Voltage (HV)</td><td>%.1f V</td></tr>\n" % (f.getBiasVoltage())
+    ps += "        <tr><td><em>I</em> <sub>Krum</sub></td><td>%d</td></tr>\n" % (f.getIKrum())
+    ps += "        <tr><th colspan=\"2\">Data</th></tr>\n"
+    ps += "        <tr><td>Hit pixels</td><td>%d (%.6f  %%)</td></tr>\n" % (f.getNumberOfUnmaskedPixels(), f.getOccupancyPc())
+    ps += "        <tr><td>Clusters</td><td>%d</td></tr>\n" % (f.getNumberOfKlusters())
+    ps += "        <tr><td>Photons</td><td>%d</td></tr>\n" % (f.getNumberOfGammas())
+    ps += "        <tr><td>Non-photons</td><td>%d</td></tr>\n" % (f.getNumberOfNonGammas())
     ps += "      </table>\n"
     ps += "    </div>\n"
     ps += "  </div>\n"
@@ -86,7 +121,7 @@ def make_browser_page(f, i, N, prev_loc, next_loc, xyC):
     ps += "<div id = \"mask\" onclick = \"$('#mask, #menu, #xyCbox').fadeOut();\"></div>\n"
     ps += "<div id = \"menu\">\n"
     ps += "  <div id = \"menu-title\">Select a dataset</div>\n"
-    ps += "  <img src = \"assets/images/close.svg\" id = \"menu-close\" onclick = \"$('#mask, #menu').fadeOut();\">\n"
+    ps += "  <img src = \"../../../assets/images/close.svg\" id = \"menu-close\" onclick = \"$('#mask, #menu').fadeOut();\">\n"
     ps += "  <ul>\n"
     ps += "    <li><a href=\"%s\">Dataset 1</a></li>\n" % ("this")
     ps += "    <li>Dataset 2</li>\n"
